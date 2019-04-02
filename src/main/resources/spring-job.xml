@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:reg="http://www.dangdang.com/schema/ddframe/reg"
+       xmlns:job="http://www.dangdang.com/schema/ddframe/job"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.dangdang.com/schema/ddframe/reg
+                        http://www.dangdang.com/schema/ddframe/reg/reg.xsd
+                        http://www.dangdang.com/schema/ddframe/job
+                        http://www.dangdang.com/schema/ddframe/job/job.xsd
+                        ">
+    <!--configure registry center -->
+    <reg:zookeeper id="regCenter" server-lists="${dubbo.registry.address}" namespace="my-job"
+                   base-sleep-time-milliseconds="1000" max-sleep-time-milliseconds="3000" max-retries="3"/>
+
+    <!--configure job -->
+
+    <job:simple id="initialBasicStockInfoJob" class="com.ping.wu.job.InitialBasicStockInfoJob" overwrite="true"
+                registry-center-ref="regCenter" cron="0 0 5 * * ? " sharding-total-count="1"
+                sharding-item-parameters="0=A"/>
+
+    <job:simple id="initialDayQuoteJob" class="com.ping.wu.job.quote.InitialDayQuoteJob" overwrite="true"
+                registry-center-ref="regCenter" cron="0 20 5 * * ? " sharding-total-count="1"
+                sharding-item-parameters="0=A"/>
+
+    <job:simple id="initialDayIndexQuoteJob" class="com.ping.wu.job.quote.InitialDayIndexQuoteJob" overwrite="true"
+                registry-center-ref="regCenter" cron="0 10 5 * * ? " sharding-total-count="1"
+                sharding-item-parameters="0=A"/>
+</beans>
